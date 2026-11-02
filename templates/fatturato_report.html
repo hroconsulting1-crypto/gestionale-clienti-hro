@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Fatturato per cliente</h1>
+
+<div class="cards-row">
+  <div class="card"><div class="num">{{ totale_generale | euro }}</div><div class="label">Totale storico</div></div>
+</div>
+
+<div class="panel">
+  <h2>Per anno</h2>
+  <table>
+    <tr>{% for a in per_anno %}<th>{{ a['anno'] }}</th>{% endfor %}</tr>
+    <tr>{% for a in per_anno %}<td>{{ a['tot'] | euro }}</td>{% endfor %}</tr>
+  </table>
+</div>
+
+<div class="panel">
+  <h2>Per cliente</h2>
+  <table>
+    <tr><th>Azienda</th><th>Stato</th><th>Ultimo anno</th><th>N. voci</th><th>Totale</th></tr>
+    {% for r in righe %}
+    <tr>
+      <td><a class="rowlink" href="{{ url_for('cliente_detail', cid=r['id']) }}">{{ r['nome_azienda'] }}</a></td>
+      <td><span class="badge badge-{{ r['stato'] }}">{{ r['stato'] }}</span></td>
+      <td>{{ r['ultimo_anno'] }}</td>
+      <td>{{ r['n'] }}</td>
+      <td>{{ r['tot'] | euro }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

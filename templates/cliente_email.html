@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Bozza email - {{ cliente['nome_azienda'] }}</h1>
+<div class="panel">
+  <p><strong>A:</strong> {{ cliente['email'] or '(nessuna email registrata - inseriscila nella scheda cliente)' }}</p>
+  <p><strong>Oggetto:</strong> {{ oggetto }}</p>
+  <div class="email-box" id="corpo-email">{{ corpo }}</div>
+  <div class="form-actions">
+    {% if cliente['email'] %}
+    <a class="btn btn-green" href="{{ mailto }}">Apri nel client di posta</a>
+    {% else %}
+    <span class="pagination-note">Aggiungi l'email del contatto nella scheda per poter aprire la bozza direttamente nel client di posta.</span>
+    {% endif %}
+    <button class="btn btn-secondary" type="button" onclick="copiaTesto()">Copia testo</button>
+    <a class="btn btn-secondary" href="{{ url_for('cliente_detail', cid=cliente['id']) }}">Torna alla scheda</a>
+  </div>
+  <p class="pagination-note">La bozza si apre nel tuo programma di posta predefinito: puoi modificarla liberamente prima di inviarla. Nessuna email viene spedita automaticamente.</p>
+</div>
+<script>
+function copiaTesto() {
+  const testo = "Oggetto: {{ oggetto }}\n\n{{ corpo }}".replace(/\\n/g, "\n");
+  navigator.clipboard.writeText(document.getElementById('corpo-email').innerText);
+  alert('Testo copiato negli appunti.');
+}
+</script>
+{% endblock %}

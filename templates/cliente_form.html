@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Nuovo contatto</h1>
+<div class="panel">
+  <form method="post">
+    <div class="form-grid">
+      <div class="full"><label>Azienda *</label><input type="text" name="nome_azienda" required></div>
+      <div><label>Titolo / ruolo referente</label><input type="text" name="titolo"></div>
+      <div><label>Referente</label><input type="text" name="referente"></div>
+      <div><label>Email</label><input type="email" name="email"></div>
+      <div><label>Telefono</label><input type="text" name="telefono"></div>
+      <div><label>Regione</label><input type="text" name="regione"></div>
+      <div><label>Canale di contatto</label><input type="text" name="canale" placeholder="Mail, telefono, passaparola..."></div>
+      <div>
+        <label>Stato</label>
+        <select name="stato">
+          {% for key, label in stati.items() %}
+          <option value="{{ key }}" {% if key == 'da_contattare' %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div><label>Prossima azione</label><input type="text" name="prossima_azione" placeholder="Es. Richiamo, Invio preventivo..."></div>
+      <div><label>Data prossima azione</label><input type="text" name="prossima_azione_data" placeholder="gg/mm/aaaa"></div>
+      <div class="full"><label>Note</label><textarea name="note" rows="4"></textarea></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-green" type="submit">Salva contatto</button>
+      <a class="btn btn-secondary" href="{{ url_for('clienti_list') }}">Annulla</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

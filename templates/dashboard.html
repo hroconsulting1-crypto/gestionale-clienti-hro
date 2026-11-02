@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<div class="cards-row">
+  <div class="card"><div class="num">{{ n_acquisiti }}</div><div class="label">Clienti acquisiti</div></div>
+  <div class="card"><div class="num">{{ n_trattativa }}</div><div class="label">In trattativa</div></div>
+  <div class="card"><div class="num">{{ n_prospect }}</div><div class="label">Prospect da contattare</div></div>
+  <div class="card"><div class="num">{{ fatt_anno | euro }}</div><div class="label">Fatturato {{ anno_corrente }}</div></div>
+  <div class="card"><div class="num">{{ fatt_totale | euro }}</div><div class="label">Fatturato storico totale</div></div>
+</div>
+
+<div class="panel">
+  <h2>Scaduti ({{ scaduti|length }})</h2>
+  {% if scaduti %}
+  <table>
+    <tr><th>Data</th><th>Azienda</th><th>Azione</th><th></th></tr>
+    {% for d, c in scaduti %}
+    <tr>
+      <td><span class="badge badge-scaduto">{{ fmt_it_date(d) }}</span></td>
+      <td><a class="rowlink" href="{{ url_for('cliente_detail', cid=c['id']) }}">{{ c['nome_azienda'] }}</a></td>
+      <td>{{ c['prossima_azione'] or '-' }}</td>
+      <td><a class="btn" href="{{ url_for('cliente_detail', cid=c['id']) }}">Apri</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="pagination-note">Nessun richiamo scaduto. Ottimo lavoro.</p>{% endif %}
+</div>
+
+<div class="panel">
+  <h2>Da chiamare oggi ({{ oggi_list|length }})</h2>
+  {% if oggi_list %}
+  <table>
+    <tr><th>Azienda</th><th>Azione</th><th></th></tr>
+    {% for d, c in oggi_list %}
+    <tr>
+      <td><a class="rowlink" href="{{ url_for('cliente_detail', cid=c['id']) }}">{{ c['nome_azienda'] }}</a></td>
+      <td>{{ c['prossima_azione'] or '-' }}</td>
+      <td><a class="btn" href="{{ url_for('cliente_detail', cid=c['id']) }}">Apri</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="pagination-note">Nessun richiamo in programma per oggi.</p>{% endif %}
+</div>
+
+<div class="panel">
+  <h2>Prossimi 7 giorni ({{ prossimi|length }})</h2>
+  {% if prossimi %}
+  <table>
+    <tr><th>Data</th><th>Azienda</th><th>Azione</th><th></th></tr>
+    {% for d, c in prossimi %}
+    <tr>
+      <td><span class="badge badge-prossimo">{{ fmt_it_date(d) }}</span></td>
+      <td><a class="rowlink" href="{{ url_for('cliente_detail', cid=c['id']) }}">{{ c['nome_azienda'] }}</a></td>
+      <td>{{ c['prossima_azione'] or '-' }}</td>
+      <td><a class="btn" href="{{ url_for('cliente_detail', cid=c['id']) }}">Apri</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="pagination-note">Nulla in programma nei prossimi 7 giorni.</p>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Prospect - lead da contattare</h1>
+<p class="pagination-note">{{ totale }} aziende in questa lista{% if regione %} per la regione selezionata{% endif %}. Mostrati i primi 300 risultati: usa la ricerca per restringere.</p>
+
+<form class="toolbar" method="get">
+  <input type="text" name="q" value="{{ q }}" placeholder="Cerca azienda, comune, settore...">
+  <select name="regione" onchange="this.form.submit()">
+    <option value="">Tutte le regioni</option>
+    {% for r in regioni %}
+    <option value="{{ r }}" {% if r == regione %}selected{% endif %}>{{ r }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn" type="submit">Filtra</button>
+</form>
+
+<table>
+  <tr><th>Azienda</th><th>Settore</th><th>Comune</th><th>Telefono</th><th></th></tr>
+  {% for p in prospect %}
+  <tr>
+    <td>{{ p['nome_azienda'] }}</td>
+    <td>{{ p['settore'] or '-' }}</td>
+    <td>{{ p['comune'] or '-' }}</td>
+    <td>{{ p['telefono'] or '-' }}</td>
+    <td>
+      <form class="inline" method="post" action="{{ url_for('prospect_promuovi', pid=p['id']) }}">
+        <button class="btn btn-green" type="submit" title="Sposta tra i contatti da chiamare">Promuovi a contatto</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="cliente-header">
+  <div>
+    <h1>{{ cliente['nome_azienda'] }}</h1>
+    <div class="info">
+      {{ cliente['referente'] or 'Nessun referente' }}
+      {% if cliente['titolo'] %} - {{ cliente['titolo'] }}{% endif %}
+      {% if cliente['regione'] %} - {{ cliente['regione'] }}{% endif %}
+    </div>
+  </div>
+  <div>
+    <span class="badge badge-{{ cliente['stato'] }}">{{ stati.get(cliente['stato'], cliente['stato']) }}</span>
+  </div>
+</div>
+
+<div class="two-col">
+  <div>
+    <div class="panel">
+      <h2>Nuova attivita' / promemoria</h2>
+      <form method="post" action="{{ url_for('cliente_nuova_attivita', cid=cliente['id']) }}">
+        <div class="form-grid">
+          <div><label>Data</label><input type="text" name="data" value="{{ oggi }}" placeholder="gg/mm/aaaa"></div>
+          <div>
+            <label>Tipo</label>
+            <select name="tipo">
+              <option>Chiamata</option><option>Email</option><option>Appuntamento</option>
+              <option>Proposta</option><option>Preventivo</option><option>Nota</option>
+            </select>
+          </div>
+          <div class="full"><label>Cosa ho fatto / cosa e' successo</label><textarea name="descrizione" rows="3" required></textarea></div>
+          <div><label>Prossima azione (opzionale)</label><input type="text" name="prossima_azione" placeholder="Es. Richiamo"></div>
+          <div><label>Data prossima azione</label><input type="text" name="prossima_azione_data" placeholder="gg/mm/aaaa"></div>
+        </div>
+        <div class="form-actions"><button class="btn btn-green" type="submit">Registra</button></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Storico attivita'</h2>
+      <ul class="timeline">
+        {% for a in attivita %}
+        <li>
+          <div class="meta"><span class="tipo">{{ a['tipo'] }}</span> - {{ a['data'] or 'data non indicata' }}</div>
+          <div>{{ a['descrizione'] }}</div>
+        </li>
+        {% else %}
+        <li>Nessuna attivita' registrata.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% if fatturato %}
+    <div class="panel">
+      <h2>Fatturato - totale {{ tot_fatturato | euro }}</h2>
+      <table>
+        <tr><th>Anno</th><th>Data</th><th>Descrizione</th><th>Importo</th><th>Fattura</th><th>Pagato</th></tr>
+        {% for f in fatturato %}
+        <tr>
+          <td>{{ f['anno'] }}</td><td>{{ f['data'] or '-' }}</td><td>{{ f['descrizione'] or '-' }}</td>
+          <td>{{ f['importo'] | euro }}</td><td>{{ f['fattura_numero'] or '-' }}</td><td>{{ f['pagato'] or '-' }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="panel">
+      <h2>Dati contatto</h2>
+      <form method="post" action="{{ url_for('cliente_modifica', cid=cliente['id']) }}">
+        <div class="form-grid">
+          <div class="full"><label>Azienda</label><input type="text" name="nome_azienda" value="{{ cliente['nome_azienda'] }}"></div>
+          <div><label>Titolo / ruolo</label><input type="text" name="titolo" value="{{ cliente['titolo'] or '' }}"></div>
+          <div><label>Referente</label><input type="text" name="referente" value="{{ cliente['referente'] or '' }}"></div>
+          <div><label>Email</label><input type="email" name="email" value="{{ cliente['email'] or '' }}"></div>
+          <div><label>Telefono</label><input type="text" name="telefono" value="{{ cliente['telefono'] or '' }}"></div>
+          <div><label>Regione</label><input type="text" name="regione" value="{{ cliente['regione'] or '' }}"></div>
+          <div><label>Canale</label><input type="text" name="canale" value="{{ cliente['canale'] or '' }}"></div>
+          <div>
+            <label>Stato</label>
+            <select name="stato">
+              {% for key, label in stati.items() %}
+              <option value="{{ key }}" {% if key == cliente['stato'] %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div><label>Prossima azione</label><input type="text" name="prossima_azione" value="{{ cliente['prossima_azione'] or '' }}"></div>
+          <div><label>Data prossima azione</label><input type="text" name="prossima_azione_data" value="{{ cliente['prossima_azione_data'] or '' }}"></div>
+          <div class="full"><label>Note</label><textarea name="note" rows="4">{{ cliente['note'] or '' }}</textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn" type="submit">Salva modifiche</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Email</h2>
+      <a class="btn btn-green" href="{{ url_for('cliente_email', cid=cliente['id']) }}">Prepara bozza email</a>
+    </div>
+
+    <div class="panel">
+      <h2>Zona pericolosa</h2>
+      <form method="post" action="{{ url_for('cliente_elimina', cid=cliente['id']) }}" onsubmit="return confirm('Eliminare definitivamente questo contatto e tutto il suo storico?');">
+        <button class="btn btn-danger" type="submit">Elimina contatto</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

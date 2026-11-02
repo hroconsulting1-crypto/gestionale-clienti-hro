@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Impostazioni</h1>
+
+<div class="panel">
+  <h2>Avvio automatico con Windows</h2>
+  {% if not is_windows %}
+    <p class="pagination-note">Questa opzione e' disponibile solo nella versione Windows (.exe) dell'app.</p>
+  {% elif not is_exe %}
+    <p class="pagination-note">Questa opzione funziona solo una volta installata l'app (non durante lo sviluppo).</p>
+  {% else %}
+    <p>Stato attuale: <strong>{{ "Attivo" if stato_avvio else "Non attivo" }}</strong></p>
+    <form method="post">
+      {% if stato_avvio %}
+        <input type="hidden" name="azione" value="disattiva">
+        <button class="btn btn-secondary" type="submit">Disattiva avvio automatico</button>
+      {% else %}
+        <input type="hidden" name="azione" value="attiva">
+        <button class="btn btn-green" type="submit">Attiva avvio automatico</button>
+      {% endif %}
+    </form>
+    <p class="pagination-note">Quando attivo, il gestionale si avvia da solo (in background, nella system tray) ogni volta che accendi il PC.</p>
+  {% endif %}
+</div>
+{% endblock %}

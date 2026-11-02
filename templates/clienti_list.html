@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Clienti e contatti</h1>
+
+<form class="toolbar" method="get">
+  <input type="text" name="q" value="{{ q }}" placeholder="Cerca azienda, referente, note...">
+  <select name="stato" onchange="this.form.submit()">
+    <option value="">Tutti gli stati</option>
+    {% for key, label in stati.items() %}
+    <option value="{{ key }}" {% if key == stato_filtro %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn" type="submit">Filtra</button>
+  {% if q or stato_filtro %}<a class="btn btn-secondary" href="{{ url_for('clienti_list') }}">Azzera</a>{% endif %}
+</form>
+
+<p class="pagination-note">{{ clienti|length }} risultati</p>
+
+<table>
+  <tr><th>Azienda</th><th>Referente</th><th>Regione</th><th>Stato</th><th>Prossima azione</th></tr>
+  {% for c in clienti %}
+  <tr>
+    <td><a class="rowlink" href="{{ url_for('cliente_detail', cid=c['id']) }}">{{ c['nome_azienda'] }}</a></td>
+    <td>{{ c['referente'] or '-' }}</td>
+    <td>{{ c['regione'] or '-' }}</td>
+    <td><span class="badge badge-{{ c['stato'] }}">{{ stati.get(c['stato'], c['stato']) }}</span></td>
+    <td>{% if c['prossima_azione_data'] %}{{ c['prossima_azione'] }} - {{ c['prossima_azione_data'] }}{% else %}-{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
