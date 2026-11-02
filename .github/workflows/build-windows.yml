@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -27,3 +30,14 @@ jobs:
         with:
           name: gestionale-clienti-exe
           path: dist/gestionale-clienti.exe
+
+      - name: Pubblica come Release
+        shell: bash
+        run: |
+          TAG="build-${{ github.run_number }}"
+          gh release create "$TAG" "dist/gestionale-clienti.exe" \
+            --repo "${{ github.repository }}" \
+            --title "Build $TAG" \
+            --notes "Build automatica da GitHub Actions (commit ${{ github.sha }})"
+        env:
+          GH_TOKEN: ${{ github.token }}
